@@ -5,6 +5,7 @@
 
 void create_stake();
 
+void create_ll();
 struct node_ll *insert_ll_first(struct node_ll *start);
 struct node_ll *insert_ll_n(struct node_ll *start);
 struct node_ll *insert_ll_end(struct node_ll *start);
@@ -16,7 +17,6 @@ struct node_ll* delete_ll_end(struct node_ll *start);
 struct node_ll* del_ll_n(struct node_ll *start);
 void display_ll_reverse(struct node_ll *start);
 struct node_ll* reverse_ll(struct node_ll *start);
-void create_ll();
 
 void create_BST();
 struct BST_node* insert(struct BST_node *root, int data);
@@ -27,6 +27,19 @@ struct BST_node* BST_find(struct BST_node* root, int data);
 struct BST_node* BST_delete(struct BST_node* root, int data);
 struct BST_node* BST_findMax(struct BST_node* root);
 
+void create_array();
+int insert_array(int arr[]);
+void display_array(int arr[],int size);
+int linear_search(int arr[],int size);
+int binary_search(int arr[],int size);
+void bubble_sort(int arr[], int size);
+int delete_array(int arr[],int size);
+void selection_sort(int arr[], int size);
+void insertion_sort(int arr[], int size);
+void quick_sort(int arr[],int p, int r);
+int quicksort_partition(int arr[], int p, int r);
+void merge(int arr[],int p, int q, int r);
+void merge_sort(int arr[], int p, int r);
 //===================================================Stack=========================================================
 
 /*
@@ -553,15 +566,6 @@ void create_BST(){
 */
 
 //========================================= ARRAYS ====================================================================
-void create_array();
-int insert_array(int arr[]);
-void display_array(int arr[],int size);
-int linear_search(int arr[],int size);
-int binary_search(int arr[],int size);
-void bubble_sort(int arr[], int size);
-int delete_array(int arr[],int size);
-void selection_sort(int arr[], int size);
-void insertion_sort(int arr[], int size);
 
 int delete_array(int arr[],int size){
 	int index,i;
@@ -571,6 +575,70 @@ int delete_array(int arr[],int size){
 	}
 	size--;
 	return size;
+}
+
+//Merge Sort
+void merge_sort(int arr[], int p, int r){
+	int q;
+	if(p<r){
+		q=(p+r)/2;
+		merge_sort(arr,p,q);
+		merge_sort(arr,q+1,r);
+		merge(arr,p,q,r);
+	}
+}
+
+void merge(int arr[],int p, int q, int r){
+	int size1=q-p, size2=r-q-1;
+	int arr1[size1+1], arr2[size2+1];
+	int i,j,k;
+	for(i=0;i<=size1;i++){
+		arr1[i]=arr[p+i];
+	}
+	for(j=0;j<=size2;j++){
+		arr2[j]=arr[q+j-1];
+	}
+	arr1[size1+1]=9999;
+	arr2[size2+1]=9999;
+	i=0;j=0;
+	for(k=p;k<r;k++){
+		if(arr1[i]<=arr2[j]){
+			arr[k]=arr1[i];
+			i++;
+		}
+		else{
+			arr[k]=arr2[j];
+			j++;
+		}
+	}
+}
+
+//QUick Sort 
+int quicksort_partition(int arr[], int p, int r){
+	int i,j,pivot_value,temp;
+	i=p-1;
+	pivot_value=arr[r];
+	for(j=p;j<=r-1;j++){
+		if(arr[j]<=pivot_value){
+			i++;
+			temp=arr[i];
+			arr[i]=arr[j];
+			arr[j]=temp;
+		}
+	}
+	temp=arr[i+1];
+	arr[i+1]=arr[r];
+	arr[r]=temp;
+	return (i+1);
+}
+
+void quick_sort(int arr[],int p, int r){
+	int q;
+	if(p<r){
+		q=quicksort_partition(arr,p,r);
+		quick_sort(arr,p,q-1);
+		quick_sort(arr,q+1,r);
+	}
 }
 
 void insertion_sort(int arr[], int size){
@@ -648,9 +716,7 @@ int linear_search(int arr[],int size){
 		if(data==arr[i]){
 			printf("\n%d found at %d positon",i+1);
 			return i;	
-		}
-		
-			
+		}		
 	}
 
 }
@@ -691,7 +757,7 @@ void create_array(){
 		printf("\t6:Sort\n");
 		printf("\t7:Selection sort");
 		printf("\t8:Insertion Sort");
-		printf("\t9:\n");
+		printf("\t9:Quick Sort\n");
 		printf("\t10:");
 		printf("\t11:\n");
 		printf("\t100:");
@@ -720,18 +786,151 @@ void create_array(){
 					break;
 			case 8: insertion_sort(arr,size);
 					break;
-			case 9:
-					break;		
+			case 9: quick_sort(arr,0,size-1);
+					break;	
+			case 10: merge_sort(arr,0,size-1);
+					break;	
 			case 100: main();
 						return;
 					
 		}	
 	}
 }
-
-
 //=========================================End of Arrays ==============================================================
 
+
+//========================================== Heap=====================================================================
+
+void build_heap(int arr[], int size);
+void max_heapify(int arr[], int i, int heap_size);
+int extract_max_heap(int arr[], int heap_size);
+int increase_key_value(int arr[], int size);
+int increase_key(int arr[], int size, int i, int value);
+
+void heap_sort(int arr[], int size){
+	int temp;
+	build_heap(arr,size);
+	temp=arr[0];
+	arr[0]=arr[size];
+	arr[size]=temp;
+	size--;
+	if(size>0)
+		heap_sort(arr,size);
+}
+
+int increase_key(int arr[], int size, int i, int value){
+	int temp,parent_index;
+	if(i>size){
+		printf("underflow");
+		return 0;
+	}
+	if(arr[i]>value){
+		printf("\nValue already larger.");
+		return i;
+	}
+	arr[i]=value;
+//	max_heapify(arr,0,size-1);			NOt OPTIOMAL
+	parent_index=(i-1)/2; 
+	while( arr[parent_index]<arr[i] && i>0 ){
+			temp=arr[parent_index];
+			arr[parent_index]=arr[i];
+			arr[i]=temp;
+			
+			i=parent_index;
+			parent_index=(i-1)/2;
+	}
+
+}
+
+int increase_key_value(int arr[], int size){
+	int value,i;
+	printf("\nEnter the index to increase: ");
+	scanf("%d",&i);
+	printf("\nEnter the new value: ");
+	scanf("%d",&value);
+	increase_key(arr,size,i,value);
+}
+
+int extract_max_heap(int arr[], int heap_size){
+	int max;
+	max=arr[0];
+	arr[0]=arr[heap_size];
+	max_heapify(arr,0,heap_size);
+	return arr[0];
+}
+
+void max_heapify(int arr[], int i, int heap_size){
+	int left_child_index, right_child_index, largest,temp;
+	left_child_index = (2*i)+1;
+	right_child_index= (2*i)+2;
+	if(left_child_index<=heap_size && arr[left_child_index]>=arr[i])
+		largest = left_child_index;
+	else
+		largest = i;
+	if(right_child_index<=heap_size && arr[right_child_index]>=arr[largest])
+		largest=right_child_index;
+	
+	if(largest!=i){
+		temp=arr[i];
+		arr[i]=arr[largest];
+		arr[largest]=temp;
+		max_heapify(arr,largest,heap_size);
+	}
+}
+
+void build_heap(int arr[], int size){
+	int heap_size,i;
+	heap_size=size;
+	for(i=(heap_size-1)/2; i>=0;i--){
+		max_heapify(arr,i,heap_size);
+	}
+}
+
+void create_heap(){
+	char con='y';
+	int choice,size;
+	int arr[100];
+	while(con=='y'||con=='Y'){
+		system("cls");
+		printf("======== Select operation for heap========\n");
+		printf("\t1:Create array");
+		printf("\t2:Build Heap");
+		printf("\t3:Display\n");
+		printf("\t4:Extract_max_heap");
+		printf("\t5:Increase Key");
+		printf("\t6:Heap Sort\n");
+		printf("\t7:");
+		printf("\t8:");
+		printf("\t9:\n");
+		printf("\t10:");
+		printf("\t11:\n");
+		printf("\t100:");
+		
+		printf("\nSelect a data structure to create: ");
+		scanf("%d",&choice);
+		
+		switch(choice){
+			case 1: size=insert_array(arr);
+					getch();
+					break;
+			case 2: build_heap(arr,size-1);
+					break;
+			case 3: display_array(arr,size);
+					getch();
+					break;
+			case 4: extract_max_heap(arr,size-1);
+					break;	
+			case 5: increase_key_value(arr,size);
+					break;
+			case 6: heap_sort(arr,size-1);
+					break;
+			case 100: main();
+						return;
+		}	
+	}
+}
+
+//========================================== End of Heap ===========================================================
 
 int main(){
 	char con = 'y';
@@ -743,7 +942,7 @@ int main(){
 		printf("\t\t2:Stack");
 		printf("\t\t3:Binary Search Tree\n");
 		printf("\t4:Array Operations");
-		printf("\t5:");
+		printf("\t5:Heap");
 		printf("\t6:\n");
 		printf("\t7:");
 		printf("\t8:");
@@ -764,6 +963,8 @@ int main(){
 //		case 3: create_BST();
 				break;
 		case 4:	create_array();
+				break;
+		case 5: create_heap();
 				break;
 		default: printf("ooops");
 				break;
