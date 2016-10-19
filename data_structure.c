@@ -4,7 +4,20 @@
 #define MAX 100
 #define INFINITY 99999
 
+
+struct queue_node{
+	int front;
+	int rear;
+	int list[100];
+};
+
+
 void create_stake();
+void push(int num);
+void add(); 
+int pop();
+int peek();
+
 
 void create_ll();
 struct node_ll *insert_ll_first(struct node_ll *start);
@@ -18,6 +31,13 @@ struct node_ll* delete_ll_end(struct node_ll *start);
 struct node_ll* del_ll_n(struct node_ll *start);
 void display_ll_reverse(struct node_ll *start);
 struct node_ll* reverse_ll(struct node_ll *start);
+
+void create_graph();
+void display_queue(struct queue_node *Q);
+struct queue_node *insert_queue(struct queue_node *Q);
+struct queue_node *delete_queue(struct queue_node *Q);
+struct queue_node *enqueue(struct queue_node *Q,int data);
+
 
 void create_BST();
 struct BST_node* insert(struct BST_node *root, int data);
@@ -50,84 +70,91 @@ int increase_key_value(int arr[], int size);
 int increase_key(int arr[], int size, int i, int value);
 void heap_sort(int arr[], int size);
 
-//===================================================Stack=========================================================
+struct node_ll{
+	int data;
+	struct node_ll* next;
+};
 
-/*
+//===================================================Stack=========================================================
 struct stack{
 	int top;
 	int max;
 	int data[10];
-};
+}s;
 
-void push(struct stack *s){
-	int num;
-	system("cls");
-	printf("\nEnter a number to insert: ");
-	scanf("%d",&num);
-	if(s->top<=10)
-		s->data[++(s->top)];
+
+void push(int num){
+	if(s.top <= 10)
+		s.data[++(s.top)]=num;
 	else
 		printf("\nOverFlow");
 }
 
-int pop(struct stack *s){
+void add(){
 	int num;
-	if(s->top==-1){
+	system("cls");
+	printf("\nEnter a number to insert: ");
+	scanf("%d",&num);
+	if(s.top <= 10)
+		s.data[++(s.top)]=num;
+	else
+		printf("\nOverFlow");
+}
+
+int pop(){
+	int num;
+	if(s.top==-1){
 		printf("\nUnderflow");
 	}
 	else{
-		num = s->data[(s->top)--];
+		num = s.data[(s.top)--];
 	}
 	return num;
 }
 
-int peek(struct stack *s){
+int peek(){
 	int num;
-	if(s->top==-1){
+	if(s.top==-1){
 		printf("\nUnderflow");
 	}
 	else{
-		num = s->data[s->top];
-		printf("\npeeked:%d",s->data[s->top]); getch();
+		num = s.data[s.top];
+		printf("\npeeked:%d",num); getch();
 	}
 	return num;
 }
 
 void create_stack(){
-	struct stack s;
+	
 	int choice;
 	char con='y';
-	s.top=-1; s.max=10;
+	s.top=-1; s.max=100;
 	
 	while(con=='y'||con=='Y'){
 		system("cls");
-		printf("\t1:Push into stack");
+		printf("\t1:Add into stack");
 		printf("\t2:Pop from stack");
 		printf("\t3:peek the stack");
 		
 		printf("\nEnter your choice:"); scanf("%d",&choice);
 		switch(choice){
-			case 1: push(&s);
+			case 1: add();
 					break;
-			case 2: pop(&s);
+			case 2: pop();
 					break;
-			case 3: peek(&s);
+			case 3: peek();
 					break;
 			default: printf("\nInvalid choice"); break;
 		}	
 	}
 	
 }
-*/
+
 //================================================ End of stack ====================================================================
 
 /*
 //==================================================Linked List====================================================
 
-struct node_ll{
-	int data;
-	struct node_ll* next;
-};
 
 
 //delete nth element from linked list
@@ -399,9 +426,9 @@ void create_ll(){
 	}
 }
 
-*/
-//===================================================End of Linked List=================================================
 
+//===================================================End of Linked List=================================================
+*/
 
 /*
 //================================================== Binary Search Tree ================================================
@@ -931,7 +958,7 @@ void create_heap(){
 		}	
 	}
 }
-
+//========================================== End of Heap =========================================================
 //========================================== Graph ===============================================================
 struct graph{
 	int V;
@@ -957,7 +984,70 @@ void display_adjMatrix(struct graph *G);
 struct adjList_graph* adjecency_graph(struct adjList_graph *G);
 void display_adjList(struct adjList_graph *G);
 
+void DFS(struct graph *G){
+	int start,i,j,current;
+	int stage[G->V];
+	s.top=-1;
+	s.max=100;
+	for(i=0;i<G->V;i++){
+		stage[i]=1;
+	}
+	system("cls");
+	printf("\nEnter the starting point to traverse: ");
+	scanf("%d",&start);
+	
+	push(start);
+	stage[start]=2;
+	printf("\n[ ");
+	while(s.top>=0){
+		current=pop();
+		printf("%d ",current);
+		stage[current]=3;
+		for(j=0;j<G->V;j++){
+		 		
+			if(G->adjMatrix[current][j]==1 & stage[j]==1){
+				push(j);
+				stage[j]=2;
+			}
+		}
+	}
+	printf("]");
+}
 
+void BFS(struct graph* G){
+	int start,i,j;
+	int state[G->V];
+	struct queue_node *Q=(struct queue_node*)malloc(sizeof(struct queue_node));
+	Q->rear=-1;
+	Q->front=-1;
+	
+	for(i=0;i<G->V;i++){
+		state[i]=1;
+		printf("\n %d State changed to 1 | ",state[i]);
+	}
+	
+	printf("\nEnter the starting Vertex: ");
+	scanf("%d",&start);
+	
+	Q=enqueue(Q,start);
+	printf("pass");
+	state[start]=2;
+	
+	printf("\nPAth: [ ");
+	while(Q->front!=-1 & Q->rear!=-1){
+		state[Q->list[Q->front]]=3;
+		printf("%d ",Q->list[Q->front]);
+		for(j=0;j<G->V;j++){
+			if(G->adjMatrix[Q->list[Q->front]][j]==1 && state[j]==1){
+				state[j]=2;
+				Q=enqueue(Q,j);
+			}
+		}
+		Q=delete_queue(Q);
+	}
+	printf("]");
+}
+	
 void display_adjList(struct adjList_graph *G){
 	int i,j;
 	struct adjList *trav=G->link;
@@ -1112,9 +1202,9 @@ void create_graph(){
 //		printf("\t3:Display\n");
 		printf("\n\t4:Display Adjancy Matrix\n" );
 		printf("\n\t5:Display Adjacency List\n");
-//		printf("\t6:Heap Sort\n");
-//		printf("\t7:");
-//		printf("\t8:");
+//		printf("\t6:\n");
+		printf("\t7:Breadth First Search\n");
+		printf("\t8:Depth First Search");
 //		printf("\t9:\n");
 //		printf("\t10:");
 //		printf("\t11:\n");
@@ -1135,15 +1225,119 @@ void create_graph(){
 			case 5: display_adjList(G2);
 					getch();
 					break;
+			case 7: BFS(G);
+					getch();
+					break;
+			case 8: DFS(G);
+					getch();
+					break;
 			case 100: main();
 						return;
 		}	
 	}
 }
-
 //========================================== End of Graph ========================================================
+//===========================================Queue=================================================================
 
-//========================================== End of Heap ===========================================================
+struct queue_node *enqueue(struct queue_node *Q,int data){
+
+	if(Q->rear==-1 && Q->front==-1){
+		Q->front=Q->front+1;
+		Q->rear=Q->rear+1;
+		Q->list[Q->rear]=data;	
+	}
+	else{
+		Q->rear++;
+		Q->list[Q->rear]=data;
+	}
+	return Q;
+}
+
+struct queue_node *insert_queue(struct queue_node *Q){
+	int data;
+	printf("\nEnter the value to add to the queue: ");
+	scanf("%d",&data);
+
+	if(Q->rear==-1 && Q->front==-1){
+		Q->front=Q->front+1;
+		Q->rear=Q->rear+1;
+		Q->list[Q->rear]=data;	
+	}
+	else{
+		Q->rear++;
+		Q->list[Q->rear]=data;
+	}
+	return Q;
+}
+
+void display_queue(struct queue_node *Q){
+	int i;
+	system("cls");
+	printf("\nQueue:[ ");
+	if(Q->rear==-1 && Q->front==-1){
+		printf("No element present ");
+	}
+	else
+		for(i=Q->front;i<=Q->rear;i++){
+			printf("%d ",Q->list[i]);
+		}
+	printf("]\n");
+}
+
+struct queue_node *delete_queue(struct queue_node *Q){
+	if(Q->rear==-1 && Q->front==-1){
+		printf("\nUnderflow, no item to delete\n");
+	}
+	else if(Q->rear==Q->front){
+		Q->rear=-1;
+		Q->front=-1;
+	}
+	else{
+		Q->front=Q->front+1;
+	}
+	return Q;
+}
+
+void create_queue(){
+	char con='y';
+	int choice;
+	struct queue_node *Q;
+	Q->rear=-1;
+	Q->front=-1;
+	while(con=='y'||con=='Y'){
+		system("cls");
+		printf("======== Select operation for queue========\n");
+		printf("\n\t1:insert");
+		printf("\n\t2:delete\n");
+		printf("\t3:Display\n");
+//		printf("\n\t4:\n" );
+//		printf("\n\t5:\n");
+//		printf("\t6:\n");
+//		printf("\t7:");
+//		printf("\t8:");
+//		printf("\t9:\n");
+//		printf("\t10:");
+//		printf("\t11:\n");
+		printf("\n\t100:Main Menu");
+		
+		printf("\nSelect a choice: ");
+		scanf("%d",&choice);
+		
+		switch(choice){
+			case 1:Q= insert_queue(Q);
+					break;
+			case 2: delete_queue(Q);
+					break;
+			case 3: display_queue(Q);
+					getch();
+					break;
+			case 100: main();
+						return;
+		}	
+	}
+}
+//===================================End of Queue=================================================================
+
 
 int main(){
 	char con = 'y';
@@ -1158,15 +1352,15 @@ int main(){
 		printf("\n\t4:Array Operations");
 		printf("\t5:Heap\t");
 		printf("\t6:Graph\n\n");
+		printf("\t7:Queue");
 
-		
 		printf("\nSelect a data structure to create: ");
 		scanf("%d",&choice);
 		
 		switch(choice){
 //		case 1 : create_ll();
 				break;
-//		case 2: create_stack();
+		case 2: create_stack();
 				break;
 //		case 3: create_BST();
 				break;
@@ -1176,8 +1370,8 @@ int main(){
 				break;
 		case 6: create_graph();
 				break;
-		default: printf("ooops");
-				break;
+		case 7: create_queue();
+				break;		
 		}
 	}
 }
