@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<conio.h>
 #define MAX 100
+#define INFINITY 99999
 
 void create_stake();
 
@@ -40,6 +41,15 @@ void quick_sort(int arr[],int p, int r);
 int quicksort_partition(int arr[], int p, int r);
 void merge(int arr[],int p, int q, int r);
 void merge_sort(int arr[], int p, int r);
+
+void create_heap();
+void build_heap(int arr[], int size);
+void max_heapify(int arr[], int i, int heap_size);
+int extract_max_heap(int arr[], int heap_size);
+int increase_key_value(int arr[], int size);
+int increase_key(int arr[], int size, int i, int value);
+void heap_sort(int arr[], int size);
+
 //===================================================Stack=========================================================
 
 /*
@@ -82,8 +92,6 @@ int peek(struct stack *s){
 	}
 	return num;
 }
-
-
 
 void create_stack(){
 	struct stack s;
@@ -801,12 +809,6 @@ void create_array(){
 
 //========================================== Heap=====================================================================
 
-void build_heap(int arr[], int size);
-void max_heapify(int arr[], int i, int heap_size);
-int extract_max_heap(int arr[], int heap_size);
-int increase_key_value(int arr[], int size);
-int increase_key(int arr[], int size, int i, int value);
-
 void heap_sort(int arr[], int size){
 	int temp;
 	build_heap(arr,size);
@@ -899,11 +901,11 @@ void create_heap(){
 		printf("\t4:Extract_max_heap");
 		printf("\t5:Increase Key");
 		printf("\t6:Heap Sort\n");
-		printf("\t7:");
-		printf("\t8:");
-		printf("\t9:\n");
-		printf("\t10:");
-		printf("\t11:\n");
+//		printf("\t7:");
+//		printf("\t8:");
+//		printf("\t9:\n");
+//		printf("\t10:");
+//		printf("\t11:\n");
 		printf("\t100:");
 		
 		printf("\nSelect a data structure to create: ");
@@ -930,6 +932,217 @@ void create_heap(){
 	}
 }
 
+//========================================== Graph ===============================================================
+struct graph{
+	int V;
+	int E;
+	int adjMatrix[100][100];												// ** can point 2 dimentional matrix
+};
+
+struct adjList{
+	int vertex_no;
+	struct adjList *next;
+};
+
+
+struct adjList_graph{
+	int V;
+	int E;
+	struct adjList *link;
+};
+
+void create_graph();
+struct graph* adjcency_graph(struct graph *G);
+void display_adjMatrix(struct graph *G);
+struct adjList_graph* adjecency_graph(struct adjList_graph *G);
+void display_adjList(struct adjList_graph *G);
+
+
+void display_adjList(struct adjList_graph *G){
+	int i,j;
+	struct adjList *trav=G->link;
+	for(i=0;i<G->V;i++){
+		trav=G->link+i;
+		while(trav->next!=G->link+i){
+			printf("%d->",trav->vertex_no);
+			trav=trav->next;
+		}
+		printf("%d",trav->vertex_no);
+		printf("\n");
+	}
+}
+
+struct adjList_graph* adjecency_graph(struct adjList_graph *G){
+	int i,j,u,v;
+	struct adjList *list,*temp,*trav;
+	system("cls");
+	printf("\nEnter the number of vertices: ");
+	scanf("%d",&G->V);
+	printf("\nEnter number of edges: ");
+	scanf("%d",&G->E);
+	
+	G->link = (struct adjList*)malloc(G->V * sizeof(struct adjList));
+	for(i=0;i<G->V;i++){
+		G->link[i].vertex_no = i;
+		G->link[i].next = G->link+i;
+	}
+	
+	printf("\nEnter the source and destination edges:");
+	for(j=0;j<G->E;j++){
+		printf("\nFrom: ");
+		scanf("%d",&u);
+		printf("To: ");
+		scanf("%d",&v);
+		
+		temp=(struct adjList*)malloc(sizeof(struct adjList));
+		temp->vertex_no=v;
+		temp->next=G->link+u;
+		trav=G->link+u;
+		while(trav->next!=G->link+u){
+			trav=trav->next;
+		}
+		trav->next=temp;
+	}
+	return G;
+		
+}
+
+void display_adjMatrix(struct graph *G){
+	int i,j;
+	for(i=0;i<G->V;i++){
+		for(j=0;j<G->V;j++){
+			if(G->adjMatrix[i][j]==INFINITY)
+				printf("\t%c",236);
+			else
+				printf("\t%d",G->adjMatrix[i][j]);
+		}		
+		printf("\n");
+	}
+
+}
+struct graph* adjcency_graph(struct graph *G){
+	int i,u,v,w;
+	
+	system("cls");
+	
+	printf("\nEnter the number pf vertices: "); 
+	scanf("%d",&G->V);
+	
+	printf("\nEnter the number pf edges: "); 
+	scanf("%d",&G->E);
+	
+//	G->adj = malloc(sizeof(int)*(G->V * G->V));
+
+	for(u=0; u<G->V ;u++)
+		for(v=0; v<G->V ;v++)
+			G->adjMatrix[u][v]=INFINITY;
+	
+	while(i!=1 || i!=2 || i!=3 || 1!=4){
+		printf("\nSelect the type of graph:-\n");
+		printf("1:Undirected Graph\n");
+		printf("2:Directed Graph\n");
+		printf("3:Undirected weighted graph\n");
+		printf("4:Directed weighted graph\nYour Choice: ");
+		scanf("%d",&i);
+		if(i==1){
+			printf("\nEnter the undirected edges.\n");
+			for(i=0;i<G->E;i++){
+				printf("\nFrom: ");
+				scanf("%d",&u);
+				printf("To: ");
+				scanf("%d",&v);
+				G->adjMatrix[u][v]=1;
+				G->adjMatrix[v][u]=1;
+			}
+			break;
+		}
+		else if(i==2){
+			printf("\nEnter the directed edges.\n");
+			for(i=0;i<G->E;i++){
+				printf("\nFrom: ");
+				scanf("%d",&u);
+				printf("To: ");
+				scanf("%d",&v);
+				G->adjMatrix[u][v]=1;
+			}
+			break;
+		}
+		else if(i==3){
+			printf("\nEnter the un-directed edges followed by there weight.\n");
+			for(i=0;i<G->E;i++){
+				printf("\nFrom: ");
+				scanf("%d",&u);
+				printf("To: ");
+				scanf("%d",&v);
+				printf("Weight: ");
+				scanf("%d",&w);
+				G->adjMatrix[u][v]=w;
+				G->adjMatrix[v][u]=w;
+			}
+			break;			
+		}
+		else if(i==4){
+			printf("\nEnter the directed edges followed by there weight.\n");
+			for(i=0;i<G->E;i++){
+				printf("\nFrom: ");
+				scanf("%d",&u);
+				printf("To: ");
+				scanf("%d",&v);
+				printf("Weight: ");
+				scanf("%d",&w);
+				G->adjMatrix[u][v]=w;
+			}
+			break;				
+		}
+	}
+	return G;
+}
+
+void create_graph(){
+	char con='y';
+	int choice;
+	int adjArr[100][100];
+	struct graph *G =(struct graph *)malloc(sizeof(struct graph));	
+	struct adjList_graph *G2= (struct adjList_graph*)malloc(sizeof (struct adjList_graph));	
+	while(con=='y'||con=='Y'){
+		system("cls");
+		printf("======== Select operation for Graph========\n");
+		printf("\n\t1:Create Graph (Adjacency matrix)\n");
+		printf("\n\t2:Create Graph (Adjacency List)\n");
+//		printf("\t3:Display\n");
+		printf("\n\t4:Display Adjancy Matrix\n" );
+		printf("\n\t5:Display Adjacency List\n");
+//		printf("\t6:Heap Sort\n");
+//		printf("\t7:");
+//		printf("\t8:");
+//		printf("\t9:\n");
+//		printf("\t10:");
+//		printf("\t11:\n");
+		printf("\n\t100:Main Menu");
+		
+		printf("\nSelect a data structure to create: ");
+		scanf("%d",&choice);
+		
+		switch(choice){
+			case 1: G=adjcency_graph(G);
+					getch();
+					break;
+			case 2: G2=adjecency_graph(G2);
+					break;
+			case 4: display_adjMatrix(G);
+					getch();
+					break;
+			case 5: display_adjList(G2);
+					getch();
+					break;
+			case 100: main();
+						return;
+		}	
+	}
+}
+
+//========================================== End of Graph ========================================================
+
 //========================================== End of Heap ===========================================================
 
 int main(){
@@ -938,19 +1151,14 @@ int main(){
 
 	while(con =='y'||con=='Y'){
 		system("cls");
-		printf("\t1:Linked list");
+		printf("======================= Data Structures=================================\n");
+		printf("\n\t1:Linked list");
 		printf("\t\t2:Stack");
 		printf("\t\t3:Binary Search Tree\n");
-		printf("\t4:Array Operations");
-		printf("\t5:Heap");
-		printf("\t6:\n");
-		printf("\t7:");
-		printf("\t8:");
-		printf("\t9:\n");
-		printf("\t10:");
-		printf("\t11:");
-		printf("\t12:\n");
-		printf("\tM:");
+		printf("\n\t4:Array Operations");
+		printf("\t5:Heap\t");
+		printf("\t6:Graph\n\n");
+
 		
 		printf("\nSelect a data structure to create: ");
 		scanf("%d",&choice);
@@ -965,6 +1173,8 @@ int main(){
 		case 4:	create_array();
 				break;
 		case 5: create_heap();
+				break;
+		case 6: create_graph();
 				break;
 		default: printf("ooops");
 				break;
