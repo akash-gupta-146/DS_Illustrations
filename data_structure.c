@@ -151,7 +151,7 @@ void create_stack() {
 
 //================================================ End of stack ====================================================================
 
-/*
+
 //==================================================Linked List====================================================
 
 
@@ -427,9 +427,9 @@ void create_ll(){
 
 
 //===================================================End of Linked List=================================================
-*/
 
-/*
+
+
 //================================================== Binary Search Tree ================================================
 
 struct BST_node{
@@ -597,7 +597,7 @@ void create_BST(){
 	}
 }
 //======================================== End of binary Search Tree ==================================================
-*/
+
 
 //========================================= ARRAYS ====================================================================
 
@@ -1003,8 +1003,9 @@ struct graph* adjcency_graph(struct graph *G);
 void display_adjMatrix(struct graph *G);
 struct adjList_graph* adjecency_graph(struct adjList_graph *G);
 void display_adjList(struct adjList_graph *G);
+void DFS(struct graph *G);
 void kruskal(struct graph *Graph);
-
+void BFS(struct graph* G); 
 
 
 
@@ -1021,7 +1022,6 @@ void kruskal(struct graph *Graph){
 	} edgelist;
 	edgelist elist;
 	
-	int G[MAX][MAX],n;
 	edgelist spanlist;	
 	int i,j,total_cost;
 
@@ -1034,7 +1034,7 @@ void kruskal(struct graph *Graph){
 	{
 	    int i;
 	
-	    for(i=0; i<n; i++)
+	    for(i=0; i<Graph->V; i++)
 	        if(belongs[i]==c2)
 	            belongs[i]=c1;
 	}
@@ -1053,7 +1053,6 @@ void kruskal(struct graph *Graph){
 	                elist.data[j+1]=temp;
 	            }
 	}
-	
 	void print()
 	{
 	    int i,cost=0;
@@ -1071,30 +1070,25 @@ void kruskal(struct graph *Graph){
 	{
 	    int belongs[MAX],i,j,cno1,cno2;
 	    elist.n=0;
-	
-	    for(i=1; i<n; i++)
+	    for(i=1; i<Graph->V; i++)
 	        for(j=0; j<i; j++)
 	        {
-	            if(G[i][j]!=0)
+	            if(Graph->adjMatrix[i][j]!=0)
 	            {
 	                elist.data[elist.n].u=i;
 	                elist.data[elist.n].v=j;
-	                elist.data[elist.n].w=G[i][j];
+	                elist.data[elist.n].w=Graph->adjMatrix[i][j];
 	                elist.n++;
 	            }
 	        }
 	    sort();
-	
-	    for(i=0; i<n; i++)
+	    for(i=0; i<Graph->V; i++)
 	        belongs[i]=i;
-	
 	    spanlist.n=0;
-	
 	    for(i=0; i<elist.n; i++)
 	    {
 	        cno1=find(belongs,elist.data[i].u);
 	        cno2=find(belongs,elist.data[i].v);
-	
 	        if(cno1!=cno2)
 	        {
 	            spanlist.data[spanlist.n]=elist.data[i];
@@ -1103,11 +1097,6 @@ void kruskal(struct graph *Graph){
 	        }
 	    }
 	}	
-	n=Graph->V;
-	for(i=0; i<n; i++)
-	    for(j=0; j<n; j++)
-	        G[i][j]=Graph->adjMatrix[i][j];
-
 	kruskals();
 	print();
 	getch();
